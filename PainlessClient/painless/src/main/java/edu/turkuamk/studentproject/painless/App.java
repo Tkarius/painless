@@ -1,3 +1,6 @@
+/** Header
+ * 
+ */
 package edu.turkuamk.studentproject.painless;
 
 /**
@@ -8,6 +11,7 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        System.out.println( "Painless." );
+        MqttConnection mqtt = new MqttConnection();
     }
 }
