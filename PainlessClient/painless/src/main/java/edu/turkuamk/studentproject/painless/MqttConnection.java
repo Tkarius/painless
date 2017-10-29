@@ -15,7 +15,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class MqttConnection {
   private static MqttClient mqttClient;
-  private static String mqttDeviceId = "";
+  private static String mqttDeviceId = "ClientDevice_1";
   private static String mqttBrokerAddr = "";
   private static MqttConnectOptions mqttConnectOptions;
   private static String mqttCaFilePath = "";
@@ -24,11 +24,7 @@ public class MqttConnection {
   private static String mqttPW = "";
   private static String mqttUserID = "";
 
-  // do we really want to connect in constructor? guess it's ok for testing at least.
-  // we'll probably want to do this after login when we actually have the credentials
-  // and can form the connect options.
-  public void MqttConnection() {
-	  mqttOpen();
+  public MqttConnection() {
   }
   
   public void sendMessage(String channel, String msgToSend) {
@@ -38,45 +34,49 @@ public class MqttConnection {
     System.out.println("Sending: Channel: " + channel + " Msg: " + message.toString());
     try {
       mqttClient.publish(channel, message);
-    } catch (MqttException | NullPointerException me) {
-      if (me.toString().contains("java.io.FileNotFoundException")) {
-        System.out.println("Debug: MQTT persistence exception: " + me);
+    } catch (MqttException | NullPointerException exc) {
+      if (exc.toString().contains("java.io.FileNotFoundException")) {
+        System.out.println("Debug: MQTT persistence exception: " + exc);
         // me.printStackTrace();
       } else {
-        System.out.println("Debug: Mqtt exception with AWS: " + me);
-        me.printStackTrace();
+        System.out.println("Debug: Mqtt exception with AWS: " + exc);
+        exc.printStackTrace();
       }
     }
   }// sendMessage
 
-  private void mqttOpen() {
+  public void mqttOpen() {
     try {
       System.out.println("Initiating mqtt broker connection.");
       mqttClient = new MqttClient(mqttBrokerAddr, mqttDeviceId);
       mqttClient.setCallback(new PainlessMqttCallback());
       mqttConnectOptions = new MqttConnectOptions();
-      mqttConnectOptions.setPassword(mqttPW.toCharArray());
-      mqttConnectOptions.setUserName(mqttUserID);
+      mqttConnectOptions.setPassword(App.Credentials.getPass().toCharArray());
+      mqttConnectOptions.setUserName(App.Credentials.getUser());
       mqttConnectOptions.setSocketFactory(
-      SslUtil.getSocketFactory(mqttCaFilePath, mqttClientCrtFilePath, mqttClientKeyFilePath, mqttPW));
+        SslUtil.getSocketFactory(mqttCaFilePath, mqttClientCrtFilePath, mqttClientKeyFilePath, App.Credentials.getPass()));
       mqttConnectOptions.setCleanSession(false);
       mqttClient.setTimeToWait(5000);
       if (!mqttClient.isConnected()) {
         mqttClient.connect(mqttConnectOptions);
       }
     } catch (MqttException exc) {
-
+      System.out.println("Debug: Exception occured while connecting to broker: " + exc);
 	}
   }
 
-  public void mqttClose() throws MqttException {
+  public void mqttClose() {
     System.out.println("Shutting down MQTT broker connection.");
     try {
       mqttClient.disconnect();
-    } catch (MqttException ex) {
-      System.out.println("Debug: Disconnecting MQTT broker connection failed: " + ex);
+    } catch (MqttException exc) {
+      System.out.println("Debug: Disconnecting MQTT broker connection failed: " + exc);
     } finally { //ensures that the client is closed only after disconnection.
-      mqttClient.close();
+      try {
+    	mqttClient.close();
+      } catch (MqttException exc) {
+        System.out.println("Debug: Closing MQTT client failed: " + exc);
+      }
     }
   }// mqttClose()
 
