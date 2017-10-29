@@ -19,12 +19,12 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 public class MqttConnection {
   private static MqttClient mqttClient;
   private static String mqttDeviceId = "ClientDevice_1";
-  private static String mqttBrokerAddr = "localhost";
+  private static String mqttBrokerAddr = "tcp://localhost";
   private static MqttConnectOptions mqttConnectOptions;
   private static String mqttCaFilePath = "";
   private static String mqttClientCrtFilePath = "";
   private static String mqttClientKeyFilePath = "";
-  private static List<String> channelList = new ArrayList<String>();
+  private static final List<String> channelList = new ArrayList<String>();
 
   public MqttConnection() {
 	  // modify to read from file
@@ -63,6 +63,7 @@ public class MqttConnection {
       if (!mqttClient.isConnected()) {
         mqttClient.connect(mqttConnectOptions);
       }
+      System.out.println("Subscribing to channels.");
       for (String channel : channelList) {
         mqttClient.subscribe(channel);
       }
