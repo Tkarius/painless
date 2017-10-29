@@ -4,6 +4,9 @@
  */
 package edu.turkuamk.studentproject.painless;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -15,69 +18,72 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class MqttConnection {
   private static MqttClient mqttClient;
-  private static String mqttDeviceId = "";
-  private static String mqttBrokerAddr = "";
+  private static String mqttDeviceId = "ClientDevice_1";
+  private static String mqttBrokerAddr = "ssl://127.0.0.1";
   private static MqttConnectOptions mqttConnectOptions;
-  private static String mqttCaFilePath = "";
-  private static String mqttClientCrtFilePath = "";
-  private static String mqttClientKeyFilePath = "";
-  private static String mqttPW = "";
-  private static String mqttUserID = "";
+  private static String mqttCaFilePath = "/home/painless/Project/PainlessClient/painless/tls/ca.crt";
+  private static String mqttClientCrtFilePath = "/home/painless/Project/PainlessClient/painless/tls/painlessTestClient.client.crt";
+  private static String mqttClientKeyFilePath = "/home/painless/Project/PainlessClient/painless/tls/cert.key";
+  private static final List<String> channelList = new ArrayList<String>();
 
-  // do we really want to connect in constructor? guess it's ok for testing at least.
-  public void MqttConnection() {
-	  mqttOpen();
+  public MqttConnection() {
+	  // modify to read from file
+	  channelList.add("testi/t1");
   }
   
-  public void sendMessage(String msgToSend) {
+  public void sendMessage(String channel, String msgToSend) {
     MqttMessage message = new MqttMessage();
     message.setPayload(msgToSend.getBytes());
-    message.setQos(2); // SIIRRÄ CONFFIIN
-    System.out.println("Sending: " + message.toString());
+    message.setQos(2);
+    System.out.println("Sending: Channel: " + channel + " Msg: " + message.toString());
     try {
-      mqttClient.publish(("tokenrequest/" + mqttDeviceId), message);
-    } catch (MqttException | NullPointerException me) {
-      if (me.toString().contains("java.io.FileNotFoundException")) {
-        System.out.println("Debug: MQTT persistence exception: " + me);
-        // me.printStackTrace();
+      mqttClient.publish(channel, message);
+    } catch (MqttException | NullPointerException exc) {
+      if (exc.toString().contains("java.io.FileNotFoundException")) {
+        System.out.println("Debug: MQTT persistence exception: " + exc);
       } else {
-        System.out.println("Debug: Mqtt exception with AWS: " + me);
-        me.printStackTrace();
+        System.out.println("Debug: Mqtt exception with AWS: " + exc);
+        exc.printStackTrace();
       }
     }
   }// sendMessage
 
-  private void mqttOpen() {
+  public void mqttOpen() {
     try {
       System.out.println("Initiating mqtt broker connection.");
       mqttClient = new MqttClient(mqttBrokerAddr, mqttDeviceId);
       mqttClient.setCallback(new PainlessMqttCallback());
       mqttConnectOptions = new MqttConnectOptions();
-      mqttConnectOptions.setPassword(mqttPW.toCharArray());
-      mqttConnectOptions.setUserName(mqttUserID);
+      mqttConnectOptions.setPassword(App.Credentials.getPass().toCharArray());
+      mqttConnectOptions.setUserName(App.Credentials.getUser());
       mqttConnectOptions.setSocketFactory(
-      SslUtil.getSocketFactory(mqttCaFilePath, mqttClientCrtFilePath, mqttClientKeyFilePath, mqttPW));
+        SslUtil.getSocketFactory(mqttCaFilePath, mqttClientCrtFilePath, mqttClientKeyFilePath, App.Credentials.getPass()));
       mqttConnectOptions.setCleanSession(false);
       mqttClient.setTimeToWait(5000);
       if (!mqttClient.isConnected()) {
         mqttClient.connect(mqttConnectOptions);
       }
+      System.out.println("Subscribing to channels.");
+      for (String channel : channelList) {
+        mqttClient.subscribe(channel);
+      }
     } catch (MqttException exc) {
-
+      System.out.println("Debug: Exception occured while connecting to broker: " + exc);
 	}
   }
 
-  public void mqttClose() throws MqttException {
+  public void mqttClose() {
     System.out.println("Shutting down MQTT broker connection.");
-    if (!mqttClient.isConnected()) {
-        try {
-          mqttClient.disconnect();
-          // mqttClient.setCallback(null);
-        } catch (MqttException ex) {
-          System.out.println("Debug: Disconnecting MQTT broker connection failed: " + ex);
-        } finally {
-          mqttClient.close();
-        }
+    try {
+      mqttClient.disconnect();
+    } catch (MqttException exc) {
+      System.out.println("Debug: Disconnecting MQTT broker connection failed: " + exc);
+    } finally { //ensures that the client is closed only after disconnecting from broker.
+      try {
+    	mqttClient.close();
+      } catch (MqttException exc) {
+        System.out.println("Debug: Closing MQTT client failed: " + exc);
+      }
     }
   }// mqttClose()
 
@@ -89,11 +95,15 @@ public class MqttConnection {
     } //connectionLost
 
     @Override
-    public void messageArrived(String topic, MqttMessage msg) throws Exception {
-      if (topic.equals("system/" + mqttDeviceId)) {
+    public void messageArrived(String channel, MqttMessage msg) throws Exception {
+      if (channel.equals("system/" + mqttDeviceId)) {
         System.out.println("Debug: System message: " + msg.toString());
-      } else if (topic.equals("system/" + mqttDeviceId + "/error")) {
+      } else if (channel.equals("system/" + mqttDeviceId + "/error")) {
         System.out.println("Received error from broker: " + msg.toString());
+      }
+      else {
+    	  // handle regular messages here!
+    	  System.out.println("[" + channel + "] " + msg);
       }
     } //messageArrived
 
