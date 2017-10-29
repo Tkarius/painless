@@ -88,11 +88,15 @@ public class MqttConnection {
     } //connectionLost
 
     @Override
-    public void messageArrived(String topic, MqttMessage msg) throws Exception {
-      if (topic.equals("system/" + mqttDeviceId)) {
+    public void messageArrived(String channel, MqttMessage msg) throws Exception {
+      if (channel.equals("system/" + mqttDeviceId)) {
         System.out.println("Debug: System message: " + msg.toString());
-      } else if (topic.equals("system/" + mqttDeviceId + "/error")) {
+      } else if (channel.equals("system/" + mqttDeviceId + "/error")) {
         System.out.println("Received error from broker: " + msg.toString());
+      }
+      else {
+    	  // handle regular messages here!
+    	  System.out.println("[" + channel + "] " + msg);
       }
     } //messageArrived
 
