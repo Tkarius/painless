@@ -6,13 +6,18 @@ package edu.turkuamk.studentproject.painless;
 import java.util.Scanner;
 
 public class App {
+  final static MqttConnection mqtt = new MqttConnection();
+  final static Scanner reader = new Scanner(System.in);
+	
   public static void main(String[] args) {
     System.out.println("Painless.");
     login();
-    MqttConnection mqtt = new MqttConnection();
+    
     mqtt.mqttOpen();
     mqtt.sendMessage("testi/t1", "Hello wurld!");
-    mqtt.mqttClose(); 
+    menu();
+    mqtt.mqttClose();
+    reader.close();
     System.out.println("Some pain will last.");
   }
 
@@ -38,10 +43,24 @@ public class App {
     
   private static void login() {
     System.out.println("Username: ");
-    final Scanner userInput = new Scanner(System.in);
-    Credentials.setUser(userInput.next());
+    Credentials.setUser(reader.nextLine());
     System.out.println("Password: ");
-    Credentials.setPass(userInput.next());
-    userInput.close();
+    Credentials.setPass(reader.nextLine());
+  }
+  // for testing without GUI
+  private static void menu() {
+    System.out.println("1) Send message to current channel");
+    System.out.println("2) Quit");
+    System.out.println("Select: ");
+    String menuChoice = reader.nextLine();
+    if (menuChoice.equals("1")) {
+      System.out.println("Message to send: ");
+      String msgToSend = reader.nextLine();
+      mqtt.sendMessage("testi/t1", msgToSend);
+    }
+    else if (menuChoice.equals("2")) {
+      return;  
+    }
+	menu();
   }
 }
