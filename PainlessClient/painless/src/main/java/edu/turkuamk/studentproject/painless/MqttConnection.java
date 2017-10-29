@@ -25,17 +25,19 @@ public class MqttConnection {
   private static String mqttUserID = "";
 
   // do we really want to connect in constructor? guess it's ok for testing at least.
+  // we'll probably want to do this after login when we actually have the credentials
+  // and can form the connect options.
   public void MqttConnection() {
 	  mqttOpen();
   }
   
-  public void sendMessage(String msgToSend) {
+  public void sendMessage(String channel, String msgToSend) {
     MqttMessage message = new MqttMessage();
     message.setPayload(msgToSend.getBytes());
-    message.setQos(2); // SIIRRÄ CONFFIIN
-    System.out.println("Sending: " + message.toString());
+    message.setQos(2);
+    System.out.println("Sending: Channel: " + channel + " Msg: " + message.toString());
     try {
-      mqttClient.publish(("tokenrequest/" + mqttDeviceId), message);
+      mqttClient.publish(channel, message);
     } catch (MqttException | NullPointerException me) {
       if (me.toString().contains("java.io.FileNotFoundException")) {
         System.out.println("Debug: MQTT persistence exception: " + me);
@@ -69,15 +71,12 @@ public class MqttConnection {
 
   public void mqttClose() throws MqttException {
     System.out.println("Shutting down MQTT broker connection.");
-    if (!mqttClient.isConnected()) {
-        try {
-          mqttClient.disconnect();
-          // mqttClient.setCallback(null);
-        } catch (MqttException ex) {
-          System.out.println("Debug: Disconnecting MQTT broker connection failed: " + ex);
-        } finally {
-          mqttClient.close();
-        }
+    try {
+      mqttClient.disconnect();
+    } catch (MqttException ex) {
+      System.out.println("Debug: Disconnecting MQTT broker connection failed: " + ex);
+    } finally { //ensures that the client is closed only after disconnection.
+      mqttClient.close();
     }
   }// mqttClose()
 
