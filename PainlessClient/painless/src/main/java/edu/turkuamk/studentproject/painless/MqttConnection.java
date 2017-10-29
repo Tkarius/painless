@@ -21,8 +21,6 @@ public class MqttConnection {
   private static String mqttCaFilePath = "";
   private static String mqttClientCrtFilePath = "";
   private static String mqttClientKeyFilePath = "";
-  private static String mqttPW = "";
-  private static String mqttUserID = "";
 
   public MqttConnection() {
   }
@@ -37,7 +35,6 @@ public class MqttConnection {
     } catch (MqttException | NullPointerException exc) {
       if (exc.toString().contains("java.io.FileNotFoundException")) {
         System.out.println("Debug: MQTT persistence exception: " + exc);
-        // me.printStackTrace();
       } else {
         System.out.println("Debug: Mqtt exception with AWS: " + exc);
         exc.printStackTrace();
@@ -71,7 +68,7 @@ public class MqttConnection {
       mqttClient.disconnect();
     } catch (MqttException exc) {
       System.out.println("Debug: Disconnecting MQTT broker connection failed: " + exc);
-    } finally { //ensures that the client is closed only after disconnection.
+    } finally { //ensures that the client is closed only after disconnecting from broker.
       try {
     	mqttClient.close();
       } catch (MqttException exc) {
