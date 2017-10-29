@@ -2,7 +2,7 @@ import ssl
 import paho.mqtt.client as mqtt
 
 def on_connect(mqttClient, userdata, flags, rc):
-  print("Server connected with result code: " + rc)
+  print("Server connected with result code: " + str(rc))
   mqttClient.subscribe("sys/#", 2)
   mqttClient.subscribe("testi/#", 2)
 
@@ -24,9 +24,11 @@ server.on_message = on_message
 server.on_subscribe = on_subscribe
 server.on_publish = on_publish
 
-server.tls_set(ca_certs="./TLS", certfile="", keyfile="", cert_reqs=ssl.CERT_REQUIRED , ciphers=None)
-server.username_pw_set("PainLess","PainLessServerPassu-001")
+server.tls_set(ca_certs="./tls/ca.crt", certfile="./tls/painlessServer.client.crt",
+               keyfile="./tls/painlessServer.client.key", cert_reqs=ssl.CERT_REQUIRED, ciphers=None)
+#convenience setting for test environment. Do not use in real environment.
+server.tls_insecure_set(True)
+server.username_pw_set("PainLess", "PainLessServerPassu-001")
 
-server.connect("localhost", 1883, 60)
+server.connect("localhost", 8883, 60)
 server.loop_forever()
-
