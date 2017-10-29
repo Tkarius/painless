@@ -11,6 +11,7 @@ public class App {
     login();
     MqttConnection mqtt = new MqttConnection();
     mqtt.mqttOpen();
+    mqtt.sendMessage("testi/t1", "Hello wurld!");
     mqtt.mqttClose(); 
     System.out.println("Some pain will last.");
   }

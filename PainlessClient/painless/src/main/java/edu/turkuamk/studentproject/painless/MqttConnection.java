@@ -4,6 +4,9 @@
  */
 package edu.turkuamk.studentproject.painless;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -16,13 +19,16 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 public class MqttConnection {
   private static MqttClient mqttClient;
   private static String mqttDeviceId = "ClientDevice_1";
-  private static String mqttBrokerAddr = "";
+  private static String mqttBrokerAddr = "localhost";
   private static MqttConnectOptions mqttConnectOptions;
   private static String mqttCaFilePath = "";
   private static String mqttClientCrtFilePath = "";
   private static String mqttClientKeyFilePath = "";
+  private static List<String> channelList = new ArrayList<String>();
 
   public MqttConnection() {
+	  // modify to read from file
+	  channelList.add("testi/t1");
   }
   
   public void sendMessage(String channel, String msgToSend) {
@@ -56,6 +62,9 @@ public class MqttConnection {
       mqttClient.setTimeToWait(5000);
       if (!mqttClient.isConnected()) {
         mqttClient.connect(mqttConnectOptions);
+      }
+      for (String channel : channelList) {
+        mqttClient.subscribe(channel);
       }
     } catch (MqttException exc) {
       System.out.println("Debug: Exception occured while connecting to broker: " + exc);
