@@ -19,11 +19,11 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 public class MqttConnection {
   private static MqttClient mqttClient;
   private static String mqttDeviceId = "ClientDevice_1";
-  private static String mqttBrokerAddr = "tcp://localhost";
+  private static String mqttBrokerAddr = "ssl://127.0.0.1";
   private static MqttConnectOptions mqttConnectOptions;
-  private static String mqttCaFilePath = "";
-  private static String mqttClientCrtFilePath = "";
-  private static String mqttClientKeyFilePath = "";
+  private static String mqttCaFilePath = "/home/painless/Project/PainlessClient/painless/tls/ca.crt";
+  private static String mqttClientCrtFilePath = "/home/painless/Project/PainlessClient/painless/tls/painlessTestClient.client.crt";
+  private static String mqttClientKeyFilePath = "/home/painless/Project/PainlessClient/painless/tls/cert.key";
   private static final List<String> channelList = new ArrayList<String>();
 
   public MqttConnection() {
