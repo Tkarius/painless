@@ -1,13 +1,25 @@
-/** Header
+/** 
+ * App.java is the main driver for Painless -client.
+ * The class controls the program flow and works
+ * as entry point for the service.
  * 
+ * @author Tommi Tuomola
+ * @author Mira Pohjola 
  */
 package edu.turkuamk.studentproject.painless;
 
 import java.util.Scanner;
 
+/**
+ * The class works as driver for Painless client.
+ * The private methods login() and menu() control
+ * the program flow and request the user credentials.
+ * 
+ * @author Tommi Tuomola
+ */
 public class App {
-  final static MqttConnection mqtt = new MqttConnection();
-  final static Scanner reader = new Scanner(System.in);
+  private static final MqttConnection mqtt = new MqttConnection();
+  private static final Scanner reader = new Scanner(System.in);
 	
   public static void main(String[] args) {
     System.out.println("Painless.");
@@ -21,9 +33,16 @@ public class App {
     System.out.println("Some pain will last.");
   }
 
+  /**
+   * Credentials class is a simple data structure for storing, setting
+   * and viewing user credentials. We need these to establish connection
+   * to MQTT-broker.
+   * 
+   * @author Tommi Tuomola
+   */
   public static class Credentials {
-    private static String userID;
-    private static String password;
+    private static String userID = "";
+    private static String password = "";
     
     public static void setUser(String user) {
       // possible validation here
@@ -47,7 +66,7 @@ public class App {
     System.out.println("Password: ");
     Credentials.setPass(reader.nextLine());
   }
-  // for testing without GUI
+  // convenience method for testing without GUI
   private static void menu() {
     System.out.println("1) Send message to current channel");
     System.out.println("2) Quit");

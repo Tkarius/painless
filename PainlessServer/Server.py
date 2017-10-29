@@ -1,3 +1,6 @@
+# Driver for Painless -server backend.
+# Listens and publishes on Painless system channels on MQTT-broker.
+
 import ssl
 import paho.mqtt.client as mqtt
 
@@ -11,8 +14,6 @@ def on_message(mqttClient, userdata, msg):
 
 def on_subscribe(mqttClient, userdata, mid, granted_qos):
   print("Subscribe successful with following QoS: " + str(granted_qos))
-  #we could parse the channels here from granted_qos and publish something
-  #like 'PainLess' super-admin present or.. something.
 
 def on_publish(mqttClient, userdata, mid):
   print("Publish successful. Somewhere, somehow :s")
