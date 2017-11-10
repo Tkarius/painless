@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.text.*?>
+
+<StackPane prefWidth="220.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.turkuamk.studentproject.painless.MainWindowController">
+	<Text fx:id="user" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+</StackPane>
+
