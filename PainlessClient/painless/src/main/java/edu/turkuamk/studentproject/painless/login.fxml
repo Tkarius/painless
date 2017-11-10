@@ -24,10 +24,10 @@
 									GridPane.rowIndex="0" alignment="BASELINE_CENTER"/>
 								<Label text="Password:" GridPane.columnIndex="0"
 									GridPane.rowIndex="2" />
-								<TextField fx:id="user" promptText="Use &quot;open&quot; to login"
-									text="open" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-								<TextField fx:id="password" promptText="Use &quot;sesame&quot; to login"
-									text="sesame" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+								<TextField fx:id="user" promptText="Give your Painless username here to login."
+									text="" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+								<TextField fx:id="password" promptText="Give your Painless password here to login."
+									text="" GridPane.columnIndex="0" GridPane.rowIndex="3" />
 								<Button fx:id="loginButton" alignment="CENTER"
 									GridPane.columnIndex="2" GridPane.rowIndex="2" defaultButton="true"
 									mnemonicParsing="false" text="Login" />
