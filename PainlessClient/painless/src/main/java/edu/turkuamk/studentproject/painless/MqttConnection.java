@@ -76,10 +76,10 @@ public class MqttConnection {
       mqttClient = new MqttClient(mqttBrokerAddr, mqttDeviceId);
       mqttClient.setCallback(new PainlessMqttCallback());
       mqttConnectOptions = new MqttConnectOptions();
-      mqttConnectOptions.setPassword(App.Credentials.getPass().toCharArray());
-      mqttConnectOptions.setUserName(App.Credentials.getUser());
+      mqttConnectOptions.setPassword(Credentials.getPass().toCharArray());
+      mqttConnectOptions.setUserName(Credentials.getUser());
       mqttConnectOptions.setSocketFactory(
-        SslUtil.getSocketFactory(mqttCaFilePath, mqttClientCrtFilePath, mqttClientKeyFilePath, App.Credentials.getPass()));
+        SslUtil.getSocketFactory(mqttCaFilePath, mqttClientCrtFilePath, mqttClientKeyFilePath, Credentials.getPass()));
       mqttConnectOptions.setCleanSession(false);
       mqttClient.setTimeToWait(5000);
       if (!mqttClient.isConnected()) {
