@@ -1,6 +1,7 @@
 package edu.turkuamk.studentproject.painless;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 
 /**
@@ -13,6 +14,10 @@ import javafx.scene.text.Text;
 
 public class MainWindowController {
 	@FXML private Text user;
+	@FXML private Text loggedInAsText;
+	@FXML private Button logoutButton;
+	@FXML private Button settingsButton;
+	
 	private static final MqttConnection mqtt = new MqttConnection();
 
 	/**
@@ -24,7 +29,8 @@ public class MainWindowController {
 	public void initDashboard(WindowManager windowManager) {
 		//TODO: Basically almost everything. 
 		//Right now we show username, open MQTT connection, send one message and shut the connection. Wohoo!
-		user.setText(Credentials.getUser());
+		//user.setText(Credentials.getUser());
+		loggedInAsText.setText("Signed in as: " + Credentials.getUser());
 		mqtt.mqttOpen();
     mqtt.sendMessage("testi/t1", "Hello wurld!");
     //menu();
