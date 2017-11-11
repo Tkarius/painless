@@ -15,10 +15,13 @@
 
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.ScrollPane?>
 
-<StackPane minWidth="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.turkuamk.studentproject.painless.MainWindowController">
+<StackPane minWidth="600.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.turkuamk.studentproject.painless.MainWindowController">
 	<children>
 		<VBox >
+			<padding><Insets top="2" right="2" bottom="2" left="2"/></padding>
 			<children>
 				<GridPane>
 				<padding><Insets top="2" right="2" bottom="2" left="2"/></padding>
@@ -30,21 +33,37 @@
 					<Text fx:id="loggedInAsText" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
 				</children>
 				<columnConstraints>
-					<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0"/>
-					<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0"/>
-					<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0"/>
+					<ColumnConstraints minWidth="10.0" percentWidth="60.0"/>
+					<ColumnConstraints minWidth="10.0" percentWidth="20.0"/>
+					<ColumnConstraints minWidth="10.0" percentWidth="20.0"/>
 				</columnConstraints>
 				<rowConstraints>
 					<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 					<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 				</rowConstraints>
 				</GridPane>
-			</children>
-		</VBox>
-		<VBox >
-			<children>
-				<GridPane ></GridPane>
 				<HBox >
+				<children>
+				<GridPane fx:id="channelList">
+					<children>
+					</children>
+					<columnConstraints>
+						<ColumnConstraints minWidth="10.0" percentWidth="60.0"/>
+						<ColumnConstraints minWidth="10.0" percentWidth="20.0"/>
+						<ColumnConstraints minWidth="10.0" percentWidth="20.0"/>
+					</columnConstraints>
+				</GridPane>
+				<ScrollPane fx:id="chatScreen" minHeight="200.0" prefWidth="250.0">
+					<GridPane fx:id="chatBox">
+					<children>
+					</children>
+					<columnConstraints>
+						<ColumnConstraints minWidth="10.0" percentWidth="10.0"/>
+						<ColumnConstraints minWidth="10.0" percentWidth="90.0"/>
+					</columnConstraints>
+					</GridPane>
+				</ScrollPane>
+				</children>
 				</HBox>
 			</children>
 		</VBox>
