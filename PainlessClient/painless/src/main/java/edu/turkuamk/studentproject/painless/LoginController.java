@@ -13,7 +13,7 @@ import javafx.scene.text.Text;
  * 
  */
 public class LoginController {
-	@FXML private TextField user;
+  @FXML private TextField user;
   @FXML private TextField password;
   @FXML private Button loginButton;
   @FXML private Button registerButton;
@@ -28,14 +28,14 @@ public class LoginController {
       	Credentials.setUser(user.getText());
       	System.out.println(Credentials.getUser() + Credentials.getPass());
       	Boolean auth = authorized();
-        	windowManager.authenticated(auth);
+        windowManager.authenticated(auth);
       }
 
-			private boolean authorized() {
-				//Send user credentials over MQTT for verification. Return true if user with that password/username exists
-				//And false if doesn't
-				return true;
-			}
+	  private boolean authorized() {
+		//Send user credentials over MQTT for verification. Return true if user with that password/username exists
+		//And false if doesn't
+	    return true;
+	  }
     });
   }
 

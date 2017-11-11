@@ -22,14 +22,13 @@ public class MainWindowController {
 	 * @author Mira Pohjola
 	 */
 	public void initDashboard(WindowManager windowManager) {
-		//TODO: Basically almost everything. 
-		//Right now we show username, open MQTT connection, send one message and shut the connection. Wohoo!
-		user.setText(Credentials.getUser());
-		mqtt.mqttOpen();
-    mqtt.sendMessage("testi/t1", "Hello wurld!");
-    //menu();
-    mqtt.mqttClose();
-		
+	  //TODO: Basically almost everything. 
+	  //Right now we show username, open MQTT connection, send one message and shut the connection. Wohoo!
+	  user.setText(Credentials.getUser());
+	  mqtt.mqttOpen();
+      mqtt.sendMessage("testi/t1", "Hello wurld!");
+      //menu();
+      mqtt.mqttClose();
 	}
 
 }
