@@ -1,9 +1,9 @@
 package edu.turkuamk.studentproject.painless;
 
 import java.io.IOException;
-import java.util.logging.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
+import javafx.stage.Stage;
 
 /**
  * WindowManager class is a higher level controller which controls switching user view between windows
@@ -14,6 +14,7 @@ import javafx.scene.*;
  */
 public class WindowManager {
   private Scene scene;
+	private Stage stage;
 
   public WindowManager(Scene scene) {
     this.scene = scene;
@@ -27,7 +28,16 @@ public class WindowManager {
       showRegisterWindow();
     }
   }
-
+  
+  /**
+   * Sets the stage parameter. This method is called from main program to allow WindowManager to have
+   * access to main stage in order to resize the stage when changing the scene.
+   * @param _stage
+   */
+	public void setStage(Stage _stage) {
+		stage = _stage;
+	}
+	
   //Handles showing login screen
   public void showLoginScreen() {
     try {
@@ -42,10 +52,11 @@ public class WindowManager {
 
   //Handles showing main screen and moves control there after succesfull login
   private void showMainWindow() {
-    try {
+    try {   	
       FXMLLoader loader = new FXMLLoader(getClass().getResource("mainWindow.fxml"));
       scene.setRoot((Parent) loader.load());
       MainWindowController controller = loader.<MainWindowController>getController();
+      stage.sizeToScene();
       controller.initDashboard(this);
     } catch (IOException ex) {
       System.out.println("No main window for you. :(" + ex);

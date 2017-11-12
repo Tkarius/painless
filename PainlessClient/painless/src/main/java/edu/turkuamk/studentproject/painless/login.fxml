@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<StackPane prefWidth="300.0" xmlns:fx="http://javafx.com/fxml/1"
+<StackPane prefWidth="300.0" maxWidth="800.0" xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="edu.turkuamk.studentproject.painless.LoginController">
 	<children>
 		<StackPane>

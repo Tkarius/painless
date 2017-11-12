@@ -44,6 +44,7 @@ public class App extends Application {
     
     WindowManager windowManager = new WindowManager(scene);
     windowManager.showLoginScreen();
+    windowManager.setStage(stage);
     stage.setTitle("Painless");
     stage.setScene(scene);
     stage.show();
