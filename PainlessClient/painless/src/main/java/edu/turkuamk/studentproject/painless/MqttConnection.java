@@ -40,6 +40,7 @@ public class MqttConnection {
   private static final List<String> channelList = new ArrayList<String>();
 
   public MqttConnection() {
+	  // read channellist from text file here and add all the subscribed channels.
 	  channelList.add("testi/t1");
   }
   /**
@@ -59,41 +60,67 @@ public class MqttConnection {
       if (exc.toString().contains("java.io.FileNotFoundException")) {
         System.out.println("Debug: MQTT persistence exception: " + exc);
       } else {
-        System.out.println("Debug: Mqtt exception with AWS: " + exc);
+        System.out.println("Debug: MQTT exception while sending msg: " + exc);
         exc.printStackTrace();
       }
     }
   }// sendMessage
 
   /**
-   * Connects to MQTT-broker with the given credentials. Uses RSA-keys
+   * Connects to MQTT-broker with the given user credentials. Uses RSA-keys
    * given in files mqttCaFilePath, mqttClientCrtFilePath and mqttClientKeyFilePath.
    * Subscribes to all channels in the channelList member variable.
    */
   public void mqttOpen() {
-    try {
-      System.out.println("Initiating mqtt broker connection.");
-      mqttClient = new MqttClient(mqttBrokerAddr, mqttDeviceId);
-      mqttClient.setCallback(new PainlessMqttCallback());
-      mqttConnectOptions = new MqttConnectOptions();
-      mqttConnectOptions.setPassword(Credentials.getPass().toCharArray());
-      mqttConnectOptions.setUserName(Credentials.getUser());
-      mqttConnectOptions.setSocketFactory(
-        SslUtil.getSocketFactory(mqttCaFilePath, mqttClientCrtFilePath, mqttClientKeyFilePath, Credentials.getPass()));
-      mqttConnectOptions.setCleanSession(false);
-      mqttClient.setTimeToWait(5000);
-      if (!mqttClient.isConnected()) {
-        mqttClient.connect(mqttConnectOptions);
-      }
-      System.out.println("Subscribing to channels.");
-      for (String channel : channelList) {
-        mqttClient.subscribe(channel);
-      }
-    } catch (MqttException exc) {
-      System.out.println("Debug: Exception occured while connecting to broker: " + exc);
+	System.out.println("Initiating MQTT broker connection.");
+	for (int i=0; i<5; i++) {
+	  try {  
+        mqttClient = new MqttClient(mqttBrokerAddr, mqttDeviceId);
+        mqttClient.setCallback(new PainlessMqttCallback());
+        mqttConnectOptions = new MqttConnectOptions();
+        mqttConnectOptions.setPassword(Credentials.getPass().toCharArray());
+        mqttConnectOptions.setUserName(Credentials.getUser());
+        mqttConnectOptions.setSocketFactory(
+          SslUtil.getSocketFactory(mqttCaFilePath, mqttClientCrtFilePath, mqttClientKeyFilePath, Credentials.getPass()));
+        mqttConnectOptions.setCleanSession(false);
+        mqttClient.setTimeToWait(5000);
+        if (!mqttClient.isConnected()) {
+          mqttClient.connect(mqttConnectOptions);
+        }
+        System.out.println("Subscribing to channels.");
+        for (String channel : channelList) {
+          mqttClient.subscribe(channel);
+        }
+      } catch (MqttException exc) {
+        System.out.println("Debug: Exception occured while connecting to broker: " + exc);
+	  }
 	}
   }
 
+  public void mqttAuthorize() {
+    try {  
+	  mqttClient = new MqttClient(mqttBrokerAddr, mqttDeviceId);
+	  mqttClient.setCallback(new PainlessMqttAuthCallback());
+	  mqttConnectOptions = new MqttConnectOptions();
+	  mqttConnectOptions.setPassword("AuthPassu".toCharArray());
+	  mqttConnectOptions.setUserName("AuthCheck");
+	  mqttConnectOptions.setSocketFactory(
+	    SslUtil.getSocketFactory(mqttCaFilePath, mqttClientCrtFilePath, mqttClientKeyFilePath, Credentials.getPass()));
+	  mqttConnectOptions.setCleanSession(true);
+	  mqttClient.setTimeToWait(5000);
+	  if (!mqttClient.isConnected()) {
+	    mqttClient.connect(mqttConnectOptions);
+	  }
+      mqttClient.subscribe("/painless/sys/auth");
+      MqttMessage message = new MqttMessage();
+      message.setPayload("Auth".getBytes());
+      message.setQos(0);
+      mqttClient.publish("/painless/sys/auth", message);
+	} catch (MqttException exc) {
+	  System.out.println("Debug: Exception occured while connecting to broker: " + exc);
+	}
+  }
+  
   /**
    * Disconnects the MQTT broker connection and closes the client.
    */
@@ -111,6 +138,22 @@ public class MqttConnection {
       }
     }
   }// mqttClose()
+  /**
+   * Disconnect silently after Auth has been resolved.
+   */
+  private void mqttAuthClose() {
+    try {
+	  mqttClient.disconnect();
+	} catch (MqttException exc) {
+	  System.out.println("AUTH: Disconnecting MQTT client failed: " + exc);
+	} finally {
+	  try {
+	  	mqttClient.close();
+	  } catch (MqttException exc) {
+	    System.out.println("AUTH: Closing MQTT client failed: " + exc);
+	  }
+	}
+  }
 
   /**
    * This private class handles the received messages from MQTT-broker.
@@ -127,9 +170,9 @@ public class MqttConnection {
 
     @Override
     public void messageArrived(String channel, MqttMessage msg) throws Exception {
-      if (channel.equals("system/" + mqttDeviceId)) {
-        System.out.println("Debug: System message: " + msg.toString());
-      } else if (channel.equals("system/" + mqttDeviceId + "/error")) {
+      if (channel.equals("painless/sys/" + mqttDeviceId)) {
+        System.out.println("System message: " + msg.toString());
+      } else if (channel.equals("painless/sys/" + mqttDeviceId + "/error")) {
         System.out.println("Received error from broker: " + msg.toString());
       }
       else {
@@ -142,4 +185,28 @@ public class MqttConnection {
 	public void deliveryComplete(IMqttDeliveryToken token) {
 	} //deliveryComplete
   } //PainlessMqttCallback
+  
+  private static class PainlessMqttAuthCallback implements MqttCallback {
+	    @Override
+	    public void connectionLost(Throwable cause) {
+	      System.out.println("Disconnected from MQTT broker.");
+	      cause.printStackTrace();
+	    } //connectionLost
+
+	    @Override
+	    public void messageArrived(String channel, MqttMessage msg) throws Exception {
+	      if (channel.equals("painless/sys/auth/" + mqttDeviceId)) {
+	        if (msg.toString().equals("Success")) {
+	        	
+	        }
+	        else {
+	        	// Auth fails, do something!
+	        }
+	      }
+	    } //messageArrived
+
+		@Override
+		public void deliveryComplete(IMqttDeliveryToken token) {
+		} //deliveryComplete
+	  } //PainlessMqttCallback
 }
