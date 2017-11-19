@@ -3,10 +3,18 @@
 
 import ssl
 import paho.mqtt.client as mqtt
+import DBConnector
+
+#DBConnector tests
+#Currently some issues with the library when making/checking hashes
+
+DBConnector.add_user('DBconTest', 'BestestPassword')
+print("Should be False: " + str(DBConnector.check_auth('DBconTest', 'WrongPasswordOuNou')))
+print("Should be True: " + str(DBConnector.check_auth('DBconTest', 'BestestPassword')))
 
 def on_connect(mqttClient, userdata, flags, rc):
   print("Server connected with result code: " + str(rc))
-  mqttClient.subscribe("sys/#", 2)
+  mqttClient.subscribe("painless/sys/#", 2)
   mqttClient.subscribe("testi/#", 2)
 
 def on_message(mqttClient, userdata, msg):
