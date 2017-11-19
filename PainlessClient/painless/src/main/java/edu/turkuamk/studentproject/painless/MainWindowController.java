@@ -50,8 +50,8 @@ public class MainWindowController {
 		//Right now we show username, open MQTT connection, send one message and shut the connection. Wohoo!
 		
 		//Following things mostly exist for testing the layout.
-		ArrayList<Channel> testChannelList = new ArrayList<Channel>();
-		testChannelList.add(new Channel("painless/parsat/on/parhaita", "Owner"));
+		ArrayList<PainlessChannel> testChannelList = new ArrayList<PainlessChannel>();
+		testChannelList.add(new PainlessChannel("painless/parsat/on/parhaita", "Owner"));
 		populateChannelList(testChannelList);	
 		ArrayList<String> testMessageList = new ArrayList<String>();
 		testMessageList.add("Olen Viesti");
@@ -67,7 +67,7 @@ public class MainWindowController {
 	
 	//Current implementation here wants a ArrayList full of channels, but if we decide to handle channels some different way
 	//let's change this!
-	private void populateChannelList(ArrayList<Channel> channels) {		
+	private void populateChannelList(ArrayList<PainlessChannel> channels) {		
 		for (int i = 0; i < channels.size(); i++) {
 			Label newChannel = new Label(channels.get(i).getcName());
 			newChannel.setOnMouseClicked(new EventHandler<MouseEvent>() {
