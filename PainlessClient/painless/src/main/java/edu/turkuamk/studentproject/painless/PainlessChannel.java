@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class PainlessChannel {
   private String cName = "";
   private String role = "Client";
-  // We'll implement the channel messages as a queue of 50 Strings in a static array.
+  // We'll implement the channel messages as a queue of 50 PainlessMessage's in a static array.
   private final int CHANNEL_MAX_MESSAGES = 51;
   private PainlessMessage[] messages = new PainlessMessage[CHANNEL_MAX_MESSAGES]; 
   private int msgTail = 0;  // index to add the next message into
