@@ -37,11 +37,11 @@ public class MqttConnection {
   private static final String mqttCaFilePath = "/home/painless/Project/PainlessClient/painless/tls/ca.crt";
   private static final String mqttClientCrtFilePath = "/home/painless/Project/PainlessClient/painless/tls/painlessTestClient.client.crt";
   private static final String mqttClientKeyFilePath = "/home/painless/Project/PainlessClient/painless/tls/cert.key";
-  private static final List<String> channelList = new ArrayList<String>();
+  private static final List<PainlessChannel> painlessChannelList = new ArrayList<PainlessChannel>();
 
   public MqttConnection() {
 	  // read channellist from text file here and add all the subscribed channels.
-	  channelList.add("testi/t1");
+	  painlessChannelList.add(new PainlessChannel("testi/t1", "Client"));
   }
   /**
    * Sends a message to a given channel on MQTT-broker at QoS 2.
@@ -72,7 +72,7 @@ public class MqttConnection {
    * given in files mqttCaFilePath, mqttClientCrtFilePath and mqttClientKeyFilePath.
    * Subscribes to all channels in the channelList member variable.
    */
-  public void mqttOpen() {
+  public static void mqttOpen() {
 	System.out.println("Initiating MQTT broker connection.");
 	for (int i=0; i<5; i++) {
 	  try {  
@@ -89,8 +89,8 @@ public class MqttConnection {
           mqttClient.connect(mqttConnectOptions);
         }
         System.out.println("Subscribing to channels.");
-        for (String channel : channelList) {
-          mqttClient.subscribe(channel);
+        for (PainlessChannel channel : painlessChannelList) {
+          mqttClient.subscribe(channel.getcName());
         }
       } catch (MqttException exc) {
         System.out.println("Debug: Exception occured while connecting to broker: " + exc);
@@ -168,6 +168,10 @@ public class MqttConnection {
       System.out.println("Disconnected from MQTT broker.");
       cause.printStackTrace();
     } //connectionLost
+    
+	@Override
+	public void deliveryComplete(IMqttDeliveryToken token) {
+	} //deliveryComplete
 
     @Override
     public void messageArrived(String channel, MqttMessage msg) throws Exception {
@@ -179,13 +183,20 @@ public class MqttConnection {
       else {  // if the message is not a system message, it's a regular channel message.
         // System.out.println("[" + channel + "] " + msg);
         PainlessMessage incChannelMessage = new PainlessMessage(msg.toString());
-        
+        painlessChannelList.get(findChannelIndexByName(channel)).addMsg(incChannelMessage);
       }
     } //messageArrived
 
-	@Override
-	public void deliveryComplete(IMqttDeliveryToken token) {
-	} //deliveryComplete
+    private int findChannelIndexByName(String channelToFind) {
+      for (PainlessChannel channel : painlessChannelList) {
+        if (channel.getcName().equals(channelToFind)) {
+        	return painlessChannelList.indexOf(channel);
+        }
+      }
+      System.out.println("Debug: we should never get here, something is very wrong.");
+      return -1;
+    }
+    
   } //PainlessMqttCallback
   
   private static class PainlessMqttAuthCallback implements MqttCallback {
@@ -200,10 +211,11 @@ public class MqttConnection {
     public void messageArrived(String channel, MqttMessage msg) throws Exception {
       if (channel.equals("painless/sys/auth/" + mqttDeviceId)) {
         if (msg.toString().equals("Success")) {
-	        	
+          // Auth successful, connect to MQTT broker with the given credentials.
+          mqttOpen();
         }
         else {
-	        	// Auth fails, do something!
+          // Auth fails, do something!
         }
       }
     } //messageArrived
