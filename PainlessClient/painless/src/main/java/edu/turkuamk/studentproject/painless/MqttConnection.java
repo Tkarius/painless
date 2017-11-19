@@ -50,7 +50,8 @@ public class MqttConnection {
    * @param msgToSend
    */
   public void sendMessage(String channel, String msgToSend) {
-    MqttMessage message = new MqttMessage();
+    msgToSend = Credentials.getUser() + " " + msgToSend;
+	MqttMessage message = new MqttMessage();
     message.setPayload(msgToSend.getBytes());
     message.setQos(2);
     System.out.println("Sending: Channel: " + channel + " Msg: " + message.toString());
@@ -175,9 +176,10 @@ public class MqttConnection {
       } else if (channel.equals("painless/sys/" + mqttDeviceId + "/error")) {
         System.out.println("Received error from broker: " + msg.toString());
       }
-      else {
-    	// handle regular messages here!
-        System.out.println("[" + channel + "] " + msg);
+      else {  // if the message is not a system message, it's a regular channel message.
+        // System.out.println("[" + channel + "] " + msg);
+        PainlessMessage incChannelMessage = new PainlessMessage(msg.toString());
+        
       }
     } //messageArrived
 
@@ -187,26 +189,27 @@ public class MqttConnection {
   } //PainlessMqttCallback
   
   private static class PainlessMqttAuthCallback implements MqttCallback {
-	    @Override
-	    public void connectionLost(Throwable cause) {
-	      System.out.println("Disconnected from MQTT broker.");
-	      cause.printStackTrace();
-	    } //connectionLost
+    @Override
+    public void connectionLost(Throwable cause) {
+      // connection lost to Auth, sounds pretty bad. we should probably terminate.
+	  System.out.println("Disconnected from MQTT broker.");
+	  cause.printStackTrace();
+	} //connectionLost
 
-	    @Override
-	    public void messageArrived(String channel, MqttMessage msg) throws Exception {
-	      if (channel.equals("painless/sys/auth/" + mqttDeviceId)) {
-	        if (msg.toString().equals("Success")) {
+    @Override
+    public void messageArrived(String channel, MqttMessage msg) throws Exception {
+      if (channel.equals("painless/sys/auth/" + mqttDeviceId)) {
+        if (msg.toString().equals("Success")) {
 	        	
-	        }
-	        else {
+        }
+        else {
 	        	// Auth fails, do something!
-	        }
-	      }
-	    } //messageArrived
+        }
+      }
+    } //messageArrived
 
-		@Override
-		public void deliveryComplete(IMqttDeliveryToken token) {
-		} //deliveryComplete
-	  } //PainlessMqttCallback
+    @Override
+    public void deliveryComplete(IMqttDeliveryToken token) {
+    } //deliveryComplete
+  } //PainlessMqttCallback
 }
