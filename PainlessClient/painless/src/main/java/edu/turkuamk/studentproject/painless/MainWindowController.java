@@ -52,11 +52,13 @@ public class MainWindowController {
 		//Following things mostly exist for testing the layout.
 		ArrayList<PainlessChannel> testChannelList = new ArrayList<PainlessChannel>();
 		testChannelList.add(new PainlessChannel("painless/parsat/on/parhaita", "Owner"));
-		populateChannelList(testChannelList);	
-		ArrayList<String> testMessageList = new ArrayList<String>();
-		testMessageList.add("Olen Viesti");
-		testMessageList.add("Olen myös viesti");
-		showChat(testMessageList);
+		populateChannelList(testChannelList);
+		testChannelList.get(0).addMsg(new PainlessMessage("Esteri_1 Olen Viesti"));
+		testChannelList.get(0).addMsg(new PainlessMessage("Esteri_2 Olen myös viesti"));
+		//ArrayList<String> testMessageList = new ArrayList<String>();
+		//testMessageList.add("Esteri_1 Olen Viesti");
+		//testMessageList.add("Esteri_2 Olen myös viesti");
+		showChat(testChannelList.get(0));
 		
 		loggedInAsText.setText("Signed in as: " + Credentials.getUser());
 		mqtt.mqttOpen();
@@ -69,37 +71,36 @@ public class MainWindowController {
 	//let's change this!
 	private void populateChannelList(ArrayList<PainlessChannel> channels) {		
 		for (int i = 0; i < channels.size(); i++) {
-			Label newChannel = new Label(channels.get(i).getcName());
+			final int loopIndex = i;
+			Label newChannel = new Label(channels.get(loopIndex).getcName());
 			newChannel.setOnMouseClicked(new EventHandler<MouseEvent>() {
-				//This even will allow us to change the active chat in chat screen!
+				//This event will allow us to change the active chat in chat screen!
 				//When we'll have the list of available chats available, we can call the correct message list
 				//by the channel. Right now the proto here just switches the testing list to an empty testing list.
 				@Override
 				public void handle(MouseEvent arg0) {
 					System.out.println("Changing chats, yay!");
-					showChat(new ArrayList<String>());
+					showChat(channels.get(loopIndex));
 				}				
 			});
-			channelList.add(newChannel, 0, i);
-			channelList.add(new Label(channels.get(i).getRole()), 1, i);
+			channelList.add(newChannel, 0, loopIndex);
+			channelList.add(new Label(channels.get(loopIndex).getRole()), 1, loopIndex);
 			//TODO: Add event listener etc. to button
 			Button manageButton = new Button("Manage");
-			channelList.add(manageButton, 2, i);
+			channelList.add(manageButton, 2, loopIndex);
 		}		
 	}
-	
-	//When we will have a class for messages, I presume we will want this method to take an ArrayList of those instead.
-	//This is purely for layout testing.
-	private void showChat(ArrayList<String> messages) {
+
+	private void showChat(PainlessChannel channel) {
 		chatBox.getChildren().clear();
+		ArrayList<PainlessMessage> messages = channel.showMsgs();
 		for (int i = 0; i < messages.size(); i++) {
-			chatBox.add(new Label("username"), 0, i); //Username of the sender goes here
-			chatBox.add(new Label("Timestamp"), 1, i); //Timestamp goes here
-			chatBox.add(new Label(messages.get(i)), 2, i); // Message goes here. How do we handle multiline/long messages?
+			chatBox.add(new Label(messages.get(i).toString()), 0, i);
+			//chatBox.add(new Label("username"), 0, i); //Username of the sender goes here
+			//chatBox.add(new Label("Timestamp"), 1, i); //Timestamp goes here
+			//chatBox.add(new Label(messages.get(i)), 2, i); // Message goes here. How do we handle multiline/long messages?
 		}
 
 	}
 	
-	
-
 }
