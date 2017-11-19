@@ -1,5 +1,7 @@
 package edu.turkuamk.studentproject.painless;
 
+import java.util.ArrayList;
+
 //TODO: This class is a suggestion on how we want to handle information about each of user's subscribed channels.
 //We could save a list of these guys in some kind of 'user' class to be used in populating the list (reading the channels
 //from file), saving the list of channels to file and in populating the main window with the channels?
@@ -42,6 +44,20 @@ public class PainlessChannel {
   
   private boolean msgsEmpty() {
     return msgHead == msgTail;
+  }
+  
+  public ArrayList<PainlessMessage> showMsgs() {
+    ArrayList<PainlessMessage> msgList = new ArrayList<PainlessMessage>();
+    if (!this.msgsEmpty()) {
+      for (int i = msgHead;i != msgTail; i++) {
+        msgList.add(messages[i]);
+        if (i == CHANNEL_MAX_MESSAGES - 1) {
+          i = 0;
+        }
+      }
+    }
+    // this may be empty!
+    return msgList;
   }
 	
   public String getcName() {
