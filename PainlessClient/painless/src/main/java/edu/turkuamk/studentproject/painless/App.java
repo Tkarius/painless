@@ -24,7 +24,7 @@ import javafx.stage.Stage;
 public class App extends Application {
   //private static final MqttConnection mqtt = new MqttConnection();
   //private static final Scanner reader = new Scanner(System.in);
-	public static Credentials Credentials;
+  public static Credentials Credentials;
 	
   public static void main(String[] args) {
     System.out.println("Painless.");
@@ -38,10 +38,10 @@ public class App extends Application {
     //reader.close();
     System.out.println("Some pain will last.");
   }
+  
   @Override
-	public void start(Stage stage) {
-  	Scene scene = new Scene(new StackPane());
-    
+  public void start(Stage stage) {
+    Scene scene = new Scene(new StackPane());
     WindowManager windowManager = new WindowManager(scene);
     windowManager.showLoginScreen();
     windowManager.setStage(stage);
@@ -49,7 +49,6 @@ public class App extends Application {
     stage.setScene(scene);
     stage.show();
   }
-
 
   /*
   private static void login() {
@@ -74,5 +73,4 @@ public class App extends Application {
     }
 	menu();
   }*/
-
 }

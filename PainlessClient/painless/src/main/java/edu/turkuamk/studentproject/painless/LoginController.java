@@ -26,7 +26,7 @@ public class LoginController {
       	System.out.println("Login Button pressed.");
       	Credentials.setPass(password.getText());
       	Credentials.setUser(user.getText());
-      	System.out.println(Credentials.getUser() + Credentials.getPass());
+      	System.out.println("Login: " + Credentials.getUser() + " " + Credentials.getPass());
       	Boolean auth = authorized();
         windowManager.authenticated(auth);
       }
