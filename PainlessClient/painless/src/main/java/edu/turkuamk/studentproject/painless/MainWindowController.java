@@ -61,7 +61,7 @@ public class MainWindowController {
 		showChat(testChannelList.get(0));
 		
 		loggedInAsText.setText("Signed in as: " + Credentials.getUser());
-		mqtt.mqttOpen();
+		mqtt.mqttAuthorize();
     mqtt.sendMessage("testi/t1", "Hello wurld!");
     //menu();
     mqtt.mqttClose();		

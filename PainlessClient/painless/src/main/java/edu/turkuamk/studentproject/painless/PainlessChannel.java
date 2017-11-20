@@ -30,7 +30,7 @@ public class PainlessChannel {
 	messages[addToIndex] = msg;
 	msgTail = addToIndex + 1;
 	if (msgsFull()) {
-		msgHead++;
+      msgHead++;
 	}
   }
   

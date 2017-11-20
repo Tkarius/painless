@@ -72,7 +72,7 @@ public class MqttConnection {
    * given in files mqttCaFilePath, mqttClientCrtFilePath and mqttClientKeyFilePath.
    * Subscribes to all channels in the channelList member variable.
    */
-  public static void mqttOpen() {
+  public static void mqttConnectBroker() {
 	System.out.println("Initiating MQTT broker connection.");
 	for (int i=0; i<5; i++) {
 	  try {  
@@ -142,7 +142,7 @@ public class MqttConnection {
   /**
    * Disconnect silently after Auth has been resolved.
    */
-  private void mqttAuthClose() {
+  private static void mqttAuthClose() {
     try {
 	  mqttClient.disconnect();
 	} catch (MqttException exc) {
@@ -209,10 +209,11 @@ public class MqttConnection {
 
     @Override
     public void messageArrived(String channel, MqttMessage msg) throws Exception {
-      if (channel.equals("painless/sys/auth/" + mqttDeviceId)) {
+      if (channel.equals("painless/sys/auth/response/" + mqttDeviceId)) {
         if (msg.toString().equals("Success")) {
           // Auth successful, connect to MQTT broker with the given credentials.
-          mqttOpen();
+          mqttAuthClose();
+          mqttConnectBroker();
         }
         else {
           // Auth fails, do something!
