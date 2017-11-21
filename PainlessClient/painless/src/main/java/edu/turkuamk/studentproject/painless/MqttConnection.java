@@ -114,7 +114,7 @@ public class MqttConnection {
 	  }
       mqttClient.subscribe("/painless/sys/auth");
       MqttMessage message = new MqttMessage();
-      message.setPayload("Auth".getBytes());
+      message.setPayload("Auth@testiauth".getBytes());
       message.setQos(0);
       mqttClient.publish("/painless/sys/auth", message);
 	} catch (MqttException exc) {

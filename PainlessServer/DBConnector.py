@@ -1,27 +1,21 @@
 from sqlalchemy import create_engine
-from PBKDF2_M_auth_python3 import hashing_passwords
+
 
 engine = create_engine('postgresql+psycopg2://painlessserver:StillSomePainLeft@localhost/mosquittoauth', pool_size=20,
                        pool_recycle=600)
 
 
 # Authenticates the given user by callign a procedure to match the username and password hash. Returns True/False accordingly.
-def check_auth(username, password):
+def get_password(username):
   connection = engine.raw_connection()
   cursor = connection.cursor()
-  print(username)
   cursor.execute('SELECT usp_get_password(%s)', (username,))
   pw_hash = cursor.fetchone()[0]
+  print("Got dem hashes: " + str(pw_hash))
   cursor.close()
   connection.commit()
   connection.close()
-  if (pw_hash == ''):
-    return False
-  print("Hasing password check result: " + str(hashing_passwords.check_hash(password, pw_hash)))
-  if (hashing_passwords.check_hash(password, pw_hash)):
-    return True
-  else:
-    return False
+  return pw_hash
 
 
 # Checks if the given user is the channel owner of the given channel. Returns True/False accordingly
@@ -37,9 +31,8 @@ def is_owner(username, channel):
 
 
 # Handles adding the user to database. Returns true if no error is encountered.
-def add_user(username, password):
+def add_user(username, password_hash):
   try:
-    password_hash = hashing_passwords.make_hash(password)
     connection = engine.raw_connection()
     cursor = connection.cursor()
     cursor.execute('SELECT usp_insert_user(%s,%s)', [username, password_hash])
@@ -62,5 +55,3 @@ def add_channel_rights(username, channel, level, owner):
     #we should identify all possible exceptions and then tighten the scope of this try/except
     return False
 
-# check_auth("Testeri", "testeri")
-#add_user("Törppö", "Einari")

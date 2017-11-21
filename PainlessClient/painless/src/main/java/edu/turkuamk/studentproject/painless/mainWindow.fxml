@@ -19,104 +19,108 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 
-<StackPane minWidth="800.0" prefWidth="900.0" maxWidth="900" 
-	xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.turkuamk.studentproject.painless.MainWindowController">
-	<children>
-		<VBox>
-			<padding>
-				<Insets top="2" right="2" bottom="2" left="2" />
-			</padding>
-			<children>
-				<GridPane>
-					<padding>
-						<Insets top="2" right="2" bottom="2" left="2" />
-					</padding>
-					<children>
-						<Label text="PAINLESS" GridPane.columnIndex="0"
-							GridPane.rowIndex="0">
-							<font>
-								<Font name="Arial" size="25.0" />
-							</font>
-						</Label>
+<StackPane minWidth="800.0" prefWidth="900.0" maxWidth="900"
+  xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.turkuamk.studentproject.painless.MainWindowController">
+  <children>
+    <VBox>
+      <padding>
+        <Insets top="2" right="2" bottom="2" left="2" />
+      </padding>
+      <children>
+        <GridPane>
+          <padding>
+            <Insets top="2" right="2" bottom="2" left="2" />
+          </padding>
+          <children>
+            <Label text="PAINLESS" GridPane.columnIndex="0"
+              GridPane.rowIndex="0">
+              <font>
+                <Font name="Arial" size="25.0" />
+              </font>
+            </Label>
 
-						<Button fx:id="settingsButton" text="Settings" alignment="CENTER_RIGHT"
-							GridPane.columnIndex="1" GridPane.rowIndex="0" />
-						<Button fx:id="logoutButton" text="Logout" alignment="CENTER_RIGHT"
-							GridPane.columnIndex="2" GridPane.rowIndex="0" />
-						<Text fx:id="loggedInAsText" GridPane.columnIndex="0"
-							GridPane.rowIndex="1" />
-					</children>
-					<columnConstraints>
-						<ColumnConstraints minWidth="10.0" percentWidth="80.0" />
-						<ColumnConstraints minWidth="10.0" percentWidth="10.0" />
-						<ColumnConstraints minWidth="10.0" percentWidth="10.0" />
-					</columnConstraints>
-					<rowConstraints>
-						<RowConstraints minHeight="10.0" prefHeight="30.0"
-							vgrow="SOMETIMES" />
-						<RowConstraints minHeight="10.0" prefHeight="30.0"
-							vgrow="SOMETIMES" />
-					</rowConstraints>
-				</GridPane>
-				<HBox spacing="25">
-					<children>
-						<GridPane fx:id="channelList" prefWidth="400.0">
-							<children>
-							</children>
-							<columnConstraints>
-								<ColumnConstraints minWidth="10.0"
-									percentWidth="60.0" />
-								<ColumnConstraints minWidth="10.0"
-									percentWidth="20.0" />
-								<ColumnConstraints minWidth="10.0"
-									percentWidth="20.0" />
-							</columnConstraints>
-						</GridPane>
-						<VBox >
-						<children>
-						<ScrollPane fx:id="chatScreen" minHeight="400.0" minWidth="500"
-							prefWidth="600.0">
-							<GridPane fx:id="chatBox" prefWidth="500.0">
-								<children>
-								</children>
-								<columnConstraints>
-									<ColumnConstraints minWidth="20.0"
-										percentWidth="15.0" />
-									<ColumnConstraints minWidth="20.0"
-										percentWidth="15.0" />
-									<ColumnConstraints minWidth="25.0"
-										percentWidth="70.0" />
-								</columnConstraints>
-							</GridPane>
-						</ScrollPane>
-						</children>
-						</VBox>
-					</children>
-				</HBox>
-				<GridPane prefWidth="900.0">
-					<padding>
-						<Insets top="2" right="0" bottom="2" left="10" />
-					</padding>
-					<children>
-						<TextField fx:id="subChannelNameField" alignment="CENTER_LEFT"
-							GridPane.columnIndex="0" GridPane.rowIndex="0" ></TextField>
-						<Button fx:id="subButton" text="Subscribe" alignment="CENTER_LEFT"
-							GridPane.columnIndex="1" GridPane.rowIndex="0" ></Button>
-						<TextField fx:id="pubMessageField" alignment="CENTER_LEFT"
-							GridPane.columnIndex="2" GridPane.rowIndex="0" ></TextField>
-						<Button fx:id="pubButton" text="Publish" alignment="CENTER_RIGHT"
-							GridPane.columnIndex="3" GridPane.rowIndex="0" ></Button>
-					</children>
-					<columnConstraints>
-						<ColumnConstraints minWidth="100.0" percentWidth="15.0" />
-						<ColumnConstraints minWidth="15.0" percentWidth="15.0" />
-						<ColumnConstraints minWidth="100.0" percentWidth="60.0" />
-						<ColumnConstraints minWidth="15.0" percentWidth="10.0" />
-					</columnConstraints>
-				</GridPane>
-			</children>
-		</VBox>
-	</children>
-	<Text fx:id="user" />
+            <Button fx:id="settingsButton" text="Settings"
+              alignment="CENTER_RIGHT" GridPane.columnIndex="1"
+              GridPane.rowIndex="0" />
+            <Button fx:id="logoutButton" text="Logout" alignment="CENTER_RIGHT"
+              GridPane.columnIndex="2" GridPane.rowIndex="0" />
+            <Text fx:id="loggedInAsText" GridPane.columnIndex="0"
+              GridPane.rowIndex="1" />
+          </children>
+          <columnConstraints>
+            <ColumnConstraints minWidth="10.0"
+              percentWidth="80.0" />
+            <ColumnConstraints minWidth="10.0"
+              percentWidth="10.0" />
+            <ColumnConstraints minWidth="10.0"
+              percentWidth="10.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0"
+              vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0"
+              vgrow="SOMETIMES" />
+          </rowConstraints>
+        </GridPane>
+        <HBox spacing="25">
+          <children>
+            <GridPane fx:id="channelList" prefWidth="400.0">
+              <children>
+              </children>
+              <columnConstraints>
+                <ColumnConstraints minWidth="10.0"
+                  percentWidth="60.0" />
+                <ColumnConstraints minWidth="10.0"
+                  percentWidth="20.0" />
+                <ColumnConstraints minWidth="10.0"
+                  percentWidth="20.0" />
+              </columnConstraints>
+            </GridPane>
+            <VBox>
+              <children>
+                <ScrollPane fx:id="chatScreen" minHeight="400.0"
+                  minWidth="500" prefWidth="600.0">
+                  <GridPane fx:id="chatBox" prefWidth="500.0">
+                    <children>
+                    </children>
+                    <columnConstraints>
+                      <ColumnConstraints minWidth="300.0"
+                        percentWidth="100.0" />
+                    </columnConstraints>
+                  </GridPane>
+                </ScrollPane>
+              </children>
+            </VBox>
+          </children>
+        </HBox>
+        <GridPane prefWidth="900.0">
+          <padding>
+            <Insets top="2" right="0" bottom="2" left="10" />
+          </padding>
+          <children>
+            <TextField fx:id="subChannelNameField" alignment="CENTER_LEFT"
+              GridPane.columnIndex="0" GridPane.rowIndex="0"></TextField>
+            <Button fx:id="subButton" text="Subscribe" alignment="CENTER_LEFT"
+              GridPane.columnIndex="1" GridPane.rowIndex="0"></Button>
+            <TextField fx:id="pubMessageField" alignment="CENTER_LEFT"
+              GridPane.columnIndex="2" GridPane.rowIndex="0"></TextField>
+            <Button fx:id="pubButton" text="Publish" alignment="CENTER_RIGHT"
+              GridPane.columnIndex="3" GridPane.rowIndex="0"></Button>
+          </children>
+          <columnConstraints>
+            <ColumnConstraints minWidth="100.0"
+              percentWidth="15.0" />
+            <ColumnConstraints minWidth="15.0"
+              percentWidth="15.0" />
+            <ColumnConstraints minWidth="100.0"
+              percentWidth="60.0" />
+            <ColumnConstraints minWidth="15.0"
+              percentWidth="10.0" />
+          </columnConstraints>
+        </GridPane>
+      </children>
+    </VBox>
+  </children>
+  <Text fx:id="user" />
 </StackPane>
 

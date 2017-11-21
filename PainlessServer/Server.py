@@ -4,21 +4,43 @@
 import ssl
 import paho.mqtt.client as mqtt
 import DBConnector
+import utilities
 
-#DBConnector tests
-#Currently some issues with the library when making/checking hashes
 
-DBConnector.add_user('DBconTest', 'BestestPassword')
-print("Should be False: " + str(DBConnector.check_auth('DBconTest', 'WrongPasswordOuNou')))
-print("Should be True: " + str(DBConnector.check_auth('DBconTest', 'BestestPassword')))
+#Testing user auth again:
+DBConnector.add_user("Testeri2", utilities.make_auth_hash(utilities.gen_hash('Testeri2')))
+
+def auth_user(username, password):
+  stored_pw_hash = DBConnector.get_password(username)
+  if (stored_pw_hash == None):
+    return False
+  else:
+    user_auth = utilities.check_hash(stored_pw_hash, password)
+    return user_auth
+
 
 def on_connect(mqttClient, userdata, flags, rc):
   print("Server connected with result code: " + str(rc))
   mqttClient.subscribe("painless/sys/#", 2)
-  mqttClient.subscribe("testi/#", 2)
+  mqttClient.subscribe("painless/sys/auth/#", 2)
 
 def on_message(mqttClient, userdata, msg):
-  print("[" + msg.topic + "] " + str(msg.payload))
+  #We should better define the channel structure in order to optimize channel checks
+  parsed_topic= msg.topic.split('/')
+  if (parsed_topic[2] == 'auth' and len(parsed_topic)<5):
+    client = parsed_topic[len(parsed_topic)-1]
+    print("[" + msg.topic + "] " + str(msg.payload))
+    msg_arr = str(msg.payload).split('@')
+    username = msg_arr[0][2:]
+    password = msg_arr[1]
+    print("auth request arrived. Let's auth this thing! Username/Password: " + username + password)
+    if(auth_user(username, password)):
+      print("Success!")
+      server.publish('painless/sys/auth/response/'+client, payload='Success', qos=2)
+    else:
+      print("Dat fails")
+      server.publish('painless/sys/auth/response/'+client, payload='DENIED', qos=2)
+
 
 def on_subscribe(mqttClient, userdata, mid, granted_qos):
   print("Subscribe successful with following QoS: " + str(granted_qos))
