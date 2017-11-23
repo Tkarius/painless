@@ -8,7 +8,7 @@ import utilities
 
 
 #Testing user auth again:
-DBConnector.add_user("Testeri2", utilities.make_auth_hash(utilities.gen_hash('Testeri2')))
+DBConnector.add_user("Oranges", utilities.gen_hash("CloseUp", utilities.salt_hash(), auth=True))
 
 def auth_user(username, password):
   stored_pw_hash = DBConnector.get_password(username)
@@ -32,7 +32,7 @@ def on_message(mqttClient, userdata, msg):
     print("[" + msg.topic + "] " + str(msg.payload))
     msg_arr = str(msg.payload).split('@')
     username = msg_arr[0][2:]
-    password = msg_arr[1]
+    password = msg_arr[1][:-1]
     print("auth request arrived. Let's auth this thing! Username/Password: " + username + password)
     if(auth_user(username, password)):
       print("Success!")

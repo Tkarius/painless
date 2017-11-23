@@ -34,12 +34,14 @@ def is_owner(username, channel):
 def add_user(username, password_hash):
   try:
     connection = engine.raw_connection()
+    print("Adding user to database with username: " + username + " and password: " + password_hash)
     cursor = connection.cursor()
     cursor.execute('SELECT usp_insert_user(%s,%s)', [username, password_hash])
     cursor.close()
     connection.commit()
     connection.close()
   except Exception:
+    print("Exception occured while adding an user to database. :(")
     # we should identify all possible exceptions and then tighten the scope of this try/except
     return False
 
