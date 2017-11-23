@@ -27,7 +27,8 @@ def on_connect(mqttClient, userdata, flags, rc):
 def on_message(mqttClient, userdata, msg):
   #We should better define the channel structure in order to optimize channel checks
   parsed_topic= msg.topic.split('/')
-  if (parsed_topic[2] == 'auth' and len(parsed_topic)<5):
+  if (parsed_topic[2] == 'auth' and parsed_topic[3] == 'request'):
+    #Processes auth requests which land on painless/auth/request/_ClientID
     client = parsed_topic[len(parsed_topic)-1]
     print("[" + msg.topic + "] " + str(msg.payload))
     msg_arr = str(msg.payload).split('@')

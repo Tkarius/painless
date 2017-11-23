@@ -5,7 +5,7 @@ engine = create_engine('postgresql+psycopg2://painlessserver:StillSomePainLeft@l
                        pool_recycle=600)
 
 
-# Authenticates the given user by callign a procedure to match the username and password hash. Returns True/False accordingly.
+# Authenticates the given user by calling a procedure to match the username and password hash. Returns True/False accordingly.
 def get_password(username):
   connection = engine.raw_connection()
   cursor = connection.cursor()
