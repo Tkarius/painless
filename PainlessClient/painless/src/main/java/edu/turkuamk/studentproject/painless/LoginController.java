@@ -20,7 +20,7 @@ public class LoginController {
   @FXML private Text testtarget;
 
   
-  public void initManager(final WindowManager windowManager) {
+  public void initManager(final WindowManager windowManager, MqttConnection mqtt) {
     loginButton.setOnAction(new EventHandler<ActionEvent>() {
       @Override public void handle(ActionEvent event) {
       	System.out.println("Login Button pressed.");
@@ -34,12 +34,9 @@ public class LoginController {
 	  private boolean authorized() {
 		//Send user credentials over MQTT for verification. Return true if user with that password/username exists
 		//And false if doesn't
+        mqtt.mqttAuthorize();
 	    return true;
 	  }
     });
   }
-
-  
-
-  
 }

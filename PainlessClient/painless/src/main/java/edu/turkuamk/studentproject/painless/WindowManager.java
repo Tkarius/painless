@@ -14,7 +14,8 @@ import javafx.stage.Stage;
  */
 public class WindowManager {
   private Scene scene;
-	private Stage stage;
+  private Stage stage;
+  private static final MqttConnection mqtt = new MqttConnection();
 
   public WindowManager(Scene scene) {
     this.scene = scene;
@@ -34,9 +35,9 @@ public class WindowManager {
    * access to main stage in order to resize the stage when changing the scene.
    * @param _stage
    */
-	public void setStage(Stage _stage) {
-		stage = _stage;
-	}
+  public void setStage(Stage _stage) {
+    stage = _stage;
+  }
 	
   //Handles showing login screen
   public void showLoginScreen() {
@@ -44,20 +45,20 @@ public class WindowManager {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("login.fxml"));
       scene.setRoot((Parent) loader.load());
       LoginController controller = loader.<LoginController>getController();
-      controller.initManager(this);
+      controller.initManager(this, mqtt);
     } catch (IOException ex) {
       //
     }
   }
 
-  //Handles showing main screen and moves control there after succesfull login
+  //Handles showing main screen and moves control there after successful login
   private void showMainWindow() {
     try {   	
       FXMLLoader loader = new FXMLLoader(getClass().getResource("mainWindow.fxml"));
       scene.setRoot((Parent) loader.load());
       MainWindowController controller = loader.<MainWindowController>getController();
       stage.sizeToScene();
-      controller.initDashboard(this);
+      controller.initDashboard(this, mqtt);
     } catch (IOException ex) {
       System.out.println("No main window for you. :(" + ex);
     }

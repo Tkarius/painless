@@ -22,21 +22,20 @@ import javafx.scene.text.Text;
  */
 
 public class MainWindowController {
-	@FXML private Text user;
-	@FXML private Text loggedInAsText;
-	@FXML private Button logoutButton;
-	@FXML private Button settingsButton;
-	@FXML private GridPane channelList;
-	@FXML private ScrollPane chatScreen;
-	@FXML private GridPane chatBox;
-	@FXML private TextField subChannelNameField;
-	@FXML private TextField pubMessageField;
-	@FXML private Button subButton;
-	@FXML private Button pubButton;
-	//private Channel activeChannel;
+  @FXML private Text user;
+  @FXML private Text loggedInAsText;
+  @FXML private Button logoutButton;
+  @FXML private Button settingsButton;
+  @FXML private GridPane channelList;
+  @FXML private ScrollPane chatScreen;
+  @FXML private GridPane chatBox;
+  @FXML private TextField subChannelNameField;
+  @FXML private TextField pubMessageField;
+  @FXML private Button subButton;
+  @FXML private Button pubButton;
+  //private Channel activeChannel;
 
-	
-	private static final MqttConnection mqtt = new MqttConnection();
+  //private static final MqttConnection mqtt = new MqttConnection();
 
 
 	/**
@@ -45,62 +44,56 @@ public class MainWindowController {
 	 * 
 	 * @author Mira Pohjola
 	 */
-	public void initDashboard(WindowManager windowManager) {
-		//TODO: Basically almost everything. 
+  public void initDashboard(WindowManager windowManager, MqttConnection mqtt) {
+    //TODO: Basically almost everything. 
 		//Right now we show username, open MQTT connection, send one message and shut the connection. Wohoo!
 		
 		//Following things mostly exist for testing the layout.
-		ArrayList<PainlessChannel> testChannelList = new ArrayList<PainlessChannel>();
-		testChannelList.add(new PainlessChannel("painless/parsat/on/parhaita", "Owner"));
-		populateChannelList(testChannelList);
-		testChannelList.get(0).addMsg(new PainlessMessage("Esteri_1 Olen Viesti"));
-		testChannelList.get(0).addMsg(new PainlessMessage("Esteri_2 Olen myös viesti"));
-		//ArrayList<String> testMessageList = new ArrayList<String>();
-		//testMessageList.add("Esteri_1 Olen Viesti");
-		//testMessageList.add("Esteri_2 Olen myös viesti");
-		showChat(testChannelList.get(0));
+    ArrayList<PainlessChannel> testChannelList = new ArrayList<PainlessChannel>();
+    testChannelList.add(new PainlessChannel("painless/parsat/on/parhaita", "Owner"));
+    populateChannelList(testChannelList);
+    testChannelList.get(0).addMsg(new PainlessMessage("Esteri_1 Olen Viesti"));
+    testChannelList.get(0).addMsg(new PainlessMessage("Esteri_2 Olen myös viesti"));
+    showChat(testChannelList.get(0));
 		
-		loggedInAsText.setText("Signed in as: " + Credentials.getUser());
-		mqtt.mqttAuthorize();
+    loggedInAsText.setText("Signed in as: " + Credentials.getUser());
     mqtt.sendMessage("testi/t1", "Hello wurld!");
-    //menu();
     mqtt.mqttClose();		
-	}
+  } //initDashboard()
 	
-	//Current implementation here wants a ArrayList full of channels, but if we decide to handle channels some different way
-	//let's change this!
-	private void populateChannelList(ArrayList<PainlessChannel> channels) {		
-		for (int i = 0; i < channels.size(); i++) {
-			final int loopIndex = i;
-			Label newChannel = new Label(channels.get(loopIndex).getcName());
-			newChannel.setOnMouseClicked(new EventHandler<MouseEvent>() {
-				//This event will allow us to change the active chat in chat screen!
-				//When we'll have the list of available chats available, we can call the correct message list
-				//by the channel. Right now the proto here just switches the testing list to an empty testing list.
-				@Override
-				public void handle(MouseEvent arg0) {
-					System.out.println("Changing chats, yay!");
-					showChat(channels.get(loopIndex));
-				}				
-			});
-			channelList.add(newChannel, 0, loopIndex);
-			channelList.add(new Label(channels.get(loopIndex).getRole()), 1, loopIndex);
-			//TODO: Add event listener etc. to button
-			Button manageButton = new Button("Manage");
-			channelList.add(manageButton, 2, loopIndex);
-		}		
-	}
+  //Current implementation here wants a ArrayList full of channels, but if we decide to handle channels some different way
+  //let's change this!
+  private void populateChannelList(ArrayList<PainlessChannel> channels) {		
+    for (int i = 0; i < channels.size(); i++) {
+      final int loopIndex = i;
+      Label newChannel = new Label(channels.get(loopIndex).getcName());
+      newChannel.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      //This event will allow us to change the active chat in chat screen!
+      //When we'll have the list of available chats available, we can call the correct message list
+      //by the channel. Right now the proto here just switches the testing list to an empty testing list.
+        @Override
+        public void handle(MouseEvent arg0) {
+          System.out.println("Changing chats, yay!");
+          showChat(channels.get(loopIndex));
+        }				
+      });
+      channelList.add(newChannel, 0, loopIndex);
+      channelList.add(new Label(channels.get(loopIndex).getRole()), 1, loopIndex);
+      //TODO: Add event listener etc. to button
+      Button manageButton = new Button("Manage");
+      channelList.add(manageButton, 2, loopIndex);
+    }		
+  }//populateChannelList()
 
-	private void showChat(PainlessChannel channel) {
-		chatBox.getChildren().clear();
-		ArrayList<PainlessMessage> messages = channel.showMsgs();
-		for (int i = 0; i < messages.size(); i++) {
-			chatBox.add(new Label(messages.get(i).toString()), 0, i);
+  private void showChat(PainlessChannel channel) {
+    chatBox.getChildren().clear();
+    ArrayList<PainlessMessage> messages = channel.showMsgs();
+    for (int i = 0; i < messages.size(); i++) {
+      chatBox.add(new Label(messages.get(i).toString()), 0, i);
 			//chatBox.add(new Label("username"), 0, i); //Username of the sender goes here
 			//chatBox.add(new Label("Timestamp"), 1, i); //Timestamp goes here
 			//chatBox.add(new Label(messages.get(i)), 2, i); // Message goes here. How do we handle multiline/long messages?
-		}
-
-	}
+    }
+  } //showchat()
 	
 }
