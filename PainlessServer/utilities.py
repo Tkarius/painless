@@ -1,5 +1,5 @@
 from werkzeug.security import pbkdf2_bin
-from base64 import b64encode, b64decode
+from base64 import b64encode
 import string
 import random
 
