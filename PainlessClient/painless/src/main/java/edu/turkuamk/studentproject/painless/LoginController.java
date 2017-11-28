@@ -27,11 +27,11 @@ public class LoginController {
       	Credentials.setPass(password.getText());
       	Credentials.setUser(user.getText());
       	System.out.println("Login: " + Credentials.getUser() + " " + Credentials.getPass());
-      	Boolean auth = authorized();
+      	boolean auth = authorize();
         windowManager.authenticated(auth);
       }
-
-	  private boolean authorized() {
+      
+	  private boolean authorize() {
 		//Send user credentials over MQTT for verification. Return true if user with that password/username exists
 		//And false if doesn't
         mqtt.mqttAuthorize();

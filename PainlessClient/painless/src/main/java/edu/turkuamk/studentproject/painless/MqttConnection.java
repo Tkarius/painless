@@ -18,6 +18,8 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import javafx.application.Platform;
+
 /**
  * MqttConnection class offers public methods for handling
  * the connection to MQTT broker. The class grants public
@@ -103,7 +105,7 @@ public class MqttConnection {
 	  mqttClient = new MqttClient(mqttBrokerAddr, mqttDeviceId);
 	  mqttClient.setCallback(new PainlessMqttAuthCallback());
 	  mqttConnectOptions = new MqttConnectOptions();
-	  mqttConnectOptions.setPassword("AuthPassu".toCharArray());
+	  mqttConnectOptions.setPassword("AuthPass".toCharArray());
 	  mqttConnectOptions.setUserName("AuthCheck");
 	  mqttConnectOptions.setSocketFactory(
 	    SslUtil.getSocketFactory(mqttCaFilePath, mqttClientCrtFilePath, mqttClientKeyFilePath, Credentials.getPass()));
@@ -112,11 +114,12 @@ public class MqttConnection {
 	  if (!mqttClient.isConnected()) {
 	    mqttClient.connect(mqttConnectOptions);
 	  }
-      mqttClient.subscribe("/painless/sys/auth");
+      mqttClient.subscribe("painless/sys/auth/response/" + mqttDeviceId);
       MqttMessage message = new MqttMessage();
-      message.setPayload("Auth@testiauth".getBytes());
+      message.setPayload((Credentials.getUser() + "@" + Credentials.getPass()).getBytes());
       message.setQos(0);
-      mqttClient.publish("/painless/sys/auth", message);
+      System.out.println("Sending Auth...");
+      mqttClient.publish("painless/sys/auth/request/" + mqttDeviceId, message);
 	} catch (MqttException exc) {
 	  System.out.println("Debug: Exception occured while connecting to broker: " + exc);
 	}
@@ -209,9 +212,11 @@ public class MqttConnection {
 
     @Override
     public void messageArrived(String channel, MqttMessage msg) throws Exception {
+      System.out.println("Saatii viesti: " + msg.toString());
       if (channel.equals("painless/sys/auth/response/" + mqttDeviceId)) {
         if (msg.toString().equals("Success")) {
           // Auth successful, connect to MQTT broker with the given credentials.
+          }
           mqttAuthClose();
           mqttConnectBroker();
         }
@@ -219,10 +224,11 @@ public class MqttConnection {
           // Auth fails, do something!
         }
       }
-    } //messageArrived
 
-    @Override
-    public void deliveryComplete(IMqttDeliveryToken token) {
-    } //deliveryComplete
-  } //PainlessMqttCallback
+  @Override
+  public void deliveryComplete(IMqttDeliveryToken arg0) {
+    // TODO Auto-generated method stub
+    
+  }
+    } //messageArrived
 }
