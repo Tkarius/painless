@@ -28,6 +28,14 @@ public class WindowManager {
   public void authenticated(Boolean auth) {
     if (auth) {
       showMainWindow();
+      MqttConnection.mqttAuthClose();
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      MqttConnection.mqttConnectBroker();
     }
     else {
       showRegisterWindow();
