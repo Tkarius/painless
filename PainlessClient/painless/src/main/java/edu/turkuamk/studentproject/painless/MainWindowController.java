@@ -3,6 +3,7 @@ package edu.turkuamk.studentproject.painless;
 
 import java.util.ArrayList;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -45,12 +46,22 @@ public class MainWindowController {
 	 * @author Mira Pohjola
 	 */
   public void initDashboard(WindowManager windowManager, MqttConnection mqtt) {
-    //TODO: Basically almost everything. 
+    logoutButton.setOnAction(new EventHandler<ActionEvent>() {
+	  @Override public void handle(ActionEvent event) {
+        System.out.println("Log out process initiated. Closing all connections.");
+		mqtt.mqttClose();
+		// save data structures to filesystem?
+		
+	  }
+	});
+	  
+	  //TODO: Basically almost everything. 
 		//Right now we show username, open MQTT connection, send one message and shut the connection. Wohoo!
 		
 		//Following things mostly exist for testing the layout.
     ArrayList<PainlessChannel> testChannelList = new ArrayList<PainlessChannel>();
     testChannelList.add(new PainlessChannel("painless/parsat/on/parhaita", "Owner"));
+    testChannelList.add(new PainlessChannel("testi/t1", "Owner"));
     populateChannelList(testChannelList);
     testChannelList.get(0).addMsg(new PainlessMessage("Esteri_1 Olen Viesti"));
     testChannelList.get(0).addMsg(new PainlessMessage("Esteri_2 Olen myös viesti"));
@@ -58,7 +69,7 @@ public class MainWindowController {
 		
     loggedInAsText.setText("Signed in as: " + Credentials.getUser());
     mqtt.sendMessage("testi/t1", "Hello wurld!");
-    mqtt.mqttClose();		
+    //mqtt.mqttClose();
   } //initDashboard()
 	
   //Current implementation here wants a ArrayList full of channels, but if we decide to handle channels some different way

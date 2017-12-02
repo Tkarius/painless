@@ -83,7 +83,7 @@ public class MqttConnection {
         mqttConnectOptions.setUserName(Credentials.getUser());
         mqttConnectOptions.setSocketFactory(
           SslUtil.getSocketFactory(mqttCaFilePath, mqttClientCrtFilePath, mqttClientKeyFilePath, Credentials.getPass()));
-        mqttConnectOptions.setCleanSession(false);
+        mqttConnectOptions.setCleanSession(true);
         mqttClient.setTimeToWait(5000);
         if (!mqttClient.isConnected()) {
           mqttClient.connect(mqttConnectOptions);
