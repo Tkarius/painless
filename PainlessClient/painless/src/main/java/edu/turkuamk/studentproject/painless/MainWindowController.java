@@ -34,10 +34,7 @@ public class MainWindowController {
   @FXML private TextField pubMessageField;
   @FXML private Button subButton;
   @FXML private Button pubButton;
-  //private Channel activeChannel;
-
-  //private static final MqttConnection mqtt = new MqttConnection();
-
+  private PainlessChannel activeChannel;
 
 	/**
 	 * Initializes the user dashboard with user related information, such as username and
@@ -54,11 +51,7 @@ public class MainWindowController {
 		
 	  }
 	});
-	  
-	  //TODO: Basically almost everything. 
-		//Right now we show username, open MQTT connection, send one message and shut the connection. Wohoo!
-		
-		//Following things mostly exist for testing the layout.
+    
     ArrayList<PainlessChannel> testChannelList = new ArrayList<PainlessChannel>();
     testChannelList.add(new PainlessChannel("painless/parsat/on/parhaita", "Owner"));
     testChannelList.add(new PainlessChannel("testi/t1", "Owner"));
@@ -70,6 +63,32 @@ public class MainWindowController {
     loggedInAsText.setText("Signed in as: " + Credentials.getUser());
     mqtt.sendMessage("testi/t1", "Hello wurld!");
     //mqtt.mqttClose();
+    //mqtt.sendMessage("testi/t1", "Hello wurld!");
+    //mqtt.mqttClose();
+    
+    //Event handler for subsribe button. Takes the text in subscribe text field and gives it as a parameter
+    // when calling a subscribe auth from MqttConnection class. That method is not yet implemented.
+    subButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        String channelName = subChannelNameField.getText();
+        //mqtt.authSubscribe(channelName);
+        
+      }
+      
+    });
+    //Event handler for publish button. Takes the text in publish text field and the currently active channel and
+    // calls mqtt.sendMessage with those as variables.
+    pubButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        String messageToSend = pubMessageField.getText();
+        String channelToSend = activeChannel.getcName();
+        mqtt.sendMessage(channelToSend, messageToSend);
+        
+      }
+      
+    });
   } //initDashboard()
 	
   //Current implementation here wants a ArrayList full of channels, but if we decide to handle channels some different way
@@ -97,6 +116,7 @@ public class MainWindowController {
   }//populateChannelList()
 
   private void showChat(PainlessChannel channel) {
+    activeChannel = channel;
     chatBox.getChildren().clear();
     ArrayList<PainlessMessage> messages = channel.showMsgs();
     for (int i = 0; i < messages.size(); i++) {
@@ -105,6 +125,6 @@ public class MainWindowController {
 			//chatBox.add(new Label("Timestamp"), 1, i); //Timestamp goes here
 			//chatBox.add(new Label(messages.get(i)), 2, i); // Message goes here. How do we handle multiline/long messages?
     }
-  } //showchat()
+  }; //showchat()
 	
 }

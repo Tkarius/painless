@@ -13,17 +13,29 @@ import javafx.stage.Stage;
  *
  */
 public class WindowManager {
-  private Scene scene;
-  private Stage stage;
+  private static Scene scene;
+  private static Stage stage;
   private static final MqttConnection mqtt = new MqttConnection();
 
-  public WindowManager(Scene scene) {
-    this.scene = scene;
+  public WindowManager(Scene _scene) {
+    scene = _scene;
+  }
+
+  public WindowManager() {
+    // TODO Auto-generated constructor stub
   }
 
   public void authenticated(Boolean auth) {
     if (auth) {
       showMainWindow();
+      MqttConnection.mqttAuthClose();
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      MqttConnection.mqttConnectBroker();
     }
     else {
       showRegisterWindow();

@@ -8,7 +8,7 @@ import utilities
 
 
 #Testing user auth again:
-DBConnector.add_user("Oranges", utilities.gen_hash("CloseUp", utilities.salt_hash(), auth=True))
+#DBConnector.add_user("Oranges", utilities.gen_hash("CloseUp", utilities.salt_hash(), auth=True))
 
 def auth_user(username, password):
   stored_pw_hash = DBConnector.get_password(username)
