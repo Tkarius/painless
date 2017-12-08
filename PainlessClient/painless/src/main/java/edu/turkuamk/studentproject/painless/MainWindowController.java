@@ -73,6 +73,7 @@ public class MainWindowController {
       public void handle(ActionEvent event) {
         String channelName = subChannelNameField.getText();
         mqtt.authSubscribe(channelName);
+        //We wait for a while for the auth to go through and them move to refresh the channel list.
         try {
           Thread.sleep(500);
         } catch (InterruptedException e) {
