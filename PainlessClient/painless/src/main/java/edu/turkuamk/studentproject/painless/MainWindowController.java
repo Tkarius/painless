@@ -55,7 +55,7 @@ public class MainWindowController {
     ArrayList<PainlessChannel> testChannelList = new ArrayList<PainlessChannel>();
     testChannelList.add(new PainlessChannel("painless/parsat/on/parhaita", "Owner"));
     testChannelList.add(new PainlessChannel("testi/t1", "Owner"));
-    populateChannelList(testChannelList);
+    populateChannelList(Credentials.getChannelList());
     testChannelList.get(0).addMsg(new PainlessMessage("Esteri_1 Olen Viesti"));
     testChannelList.get(0).addMsg(new PainlessMessage("Esteri_2 Olen myös viesti"));
     showChat(testChannelList.get(0));
@@ -72,7 +72,14 @@ public class MainWindowController {
       @Override
       public void handle(ActionEvent event) {
         String channelName = subChannelNameField.getText();
-        //mqtt.authSubscribe(channelName);
+        mqtt.authSubscribe(channelName);
+        try {
+          Thread.sleep(500);
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        populateChannelList(Credentials.getChannelList());
         
       }
       
@@ -90,7 +97,7 @@ public class MainWindowController {
       
     });
   } //initDashboard()
-	
+
   //Current implementation here wants a ArrayList full of channels, but if we decide to handle channels some different way
   //let's change this!
   private void populateChannelList(ArrayList<PainlessChannel> channels) {		
@@ -100,11 +107,12 @@ public class MainWindowController {
       newChannel.setOnMouseClicked(new EventHandler<MouseEvent>() {
       //This event will allow us to change the active chat in chat screen!
       //When we'll have the list of available chats available, we can call the correct message list
-      //by the channel. Right now the proto here just switches the testing list to an empty testing list.
+      //by the channel.
         @Override
         public void handle(MouseEvent arg0) {
           System.out.println("Changing chats, yay!");
           showChat(channels.get(loopIndex));
+          activeChannel = channels.get(loopIndex);
         }				
       });
       channelList.add(newChannel, 0, loopIndex);

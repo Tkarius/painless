@@ -46,14 +46,12 @@ def add_user(username, password_hash):
     return False
 
 def add_channel_rights(username, channel, level, owner):
-  try:
+    print("Adding channel rights for user: " + username + " to channel " + channel)
     connection = engine.raw_connection()
     cursor = connection.cursor()
-    cursor.execute('SELECT usp_insert_channel_right(%s,%s, %s, %s)', [username, channel, level, owner])
+    cursor.execute('SELECT usp_insert_channel_right(%s::varchar,%s::varchar, %s::smallint, %s::smallint)', [username, channel, level, owner,])
     cursor.close()
     connection.commit()
     connection.close()
-  except Exception:
-    #we should identify all possible exceptions and then tighten the scope of this try/except
-    return False
+
 
