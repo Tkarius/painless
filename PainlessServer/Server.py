@@ -23,14 +23,15 @@ def on_connect(mqttClient, userdata, flags, rc):
   print("Server connected with result code: " + str(rc))
   mqttClient.subscribe("painless/sys/#", 2)
   mqttClient.subscribe("painless/sys/auth/#", 2)
+  mqttClient.subscribe("painless/sys/subscribe/#", 2)
 
 def on_message(mqttClient, userdata, msg):
   #We should better define the channel structure in order to optimize channel checks
   parsed_topic= msg.topic.split('/')
+  print("[" + msg.topic + "] " + str(msg.payload))
   if (parsed_topic[2] == 'auth' and parsed_topic[3] == 'request'):
     #Processes auth requests which land on painless/auth/request/_ClientID
     client = parsed_topic[len(parsed_topic)-1]
-    print("[" + msg.topic + "] " + str(msg.payload))
     msg_arr = str(msg.payload).split('@')
     username = msg_arr[0][2:]
     password = msg_arr[1][:-1]
@@ -41,6 +42,19 @@ def on_message(mqttClient, userdata, msg):
     else:
       print("Dat fails")
       server.publish('painless/sys/auth/response/'+client, payload='DENIED', qos=2)
+  elif (parsed_topic[2] == 'subscribe' and parsed_topic[3] == 'request'):
+    print("Got a subscribe request, jou")
+    client = parsed_topic[len(parsed_topic) - 1]
+    msg_arr = str(msg.payload).split(' ')
+    sbusername = msg_arr[0][2:]
+    print("Username: " + sbusername)
+    channel = "painless/userch/" + msg_arr[1][:-1]
+    if "/sys/" not in channel:
+      DBConnector.add_channel_rights(sbusername, channel, 1, 0)
+      DBConnector.add_channel_rights(sbusername, channel, 2, 0)
+      server.publish('painless/sys/subscribe/response/' + client, payload='Success@'+ channel, qos=2)
+    else:
+      server.publish('painless/sys/subscribe/response/' + client, payload='Fail@'+ channel, qos=2)
 
 
 def on_subscribe(mqttClient, userdata, mid, granted_qos):
