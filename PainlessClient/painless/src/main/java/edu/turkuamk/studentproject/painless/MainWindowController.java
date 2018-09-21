@@ -34,7 +34,7 @@ public class MainWindowController {
   @FXML private TextField pubMessageField;
   @FXML private Button subButton;
   @FXML private Button pubButton;
-  private PainlessChannel activeChannel;
+  private static PainlessChannel activeChannel;
 
 	/**
 	 * Initializes the user dashboard with user related information, such as username and
@@ -46,6 +46,7 @@ public class MainWindowController {
     logoutButton.setOnAction(new EventHandler<ActionEvent>() {
 	  @Override public void handle(ActionEvent event) {
         System.out.println("Log out process initiated. Closing all connections.");
+        windowManager.showLoginScreen();
 		mqtt.mqttClose();
 		// save data structures to filesystem?
 		
@@ -53,15 +54,14 @@ public class MainWindowController {
 	});
     
     ArrayList<PainlessChannel> testChannelList = new ArrayList<PainlessChannel>();
-    testChannelList.add(new PainlessChannel("painless/parsat/on/parhaita", "Owner"));
-    testChannelList.add(new PainlessChannel("testi/t1", "Owner"));
-    populateChannelList(Credentials.getChannelList());
+    /*testChannelList.add(new PainlessChannel("painless/parsat/on/parhaita", "Owner"));
+    testChannelList.add(new PainlessChannel("testi/t1", "Owner"));   
     testChannelList.get(0).addMsg(new PainlessMessage("Esteri_1 Olen Viesti"));
-    testChannelList.get(0).addMsg(new PainlessMessage("Esteri_2 Olen myös viesti"));
-    showChat(testChannelList.get(0));
-		
+    testChannelList.get(0).addMsg(new PainlessMessage("Esteri_2 Olen myös viesti"));*/  
+    populateChannelList(Credentials.getChannelList());
     loggedInAsText.setText("Signed in as: " + Credentials.getUser());
     mqtt.sendMessage("testi/t1", "Hello wurld!");
+    showChat(Credentials.getChannelList().get(0));
     //mqtt.mqttClose();
     //mqtt.sendMessage("testi/t1", "Hello wurld!");
     //mqtt.mqttClose();
@@ -130,10 +130,11 @@ public class MainWindowController {
     ArrayList<PainlessMessage> messages = channel.showMsgs();
     for (int i = 0; i < messages.size(); i++) {
       chatBox.add(new Label(messages.get(i).toString()), 0, i);
-			//chatBox.add(new Label("username"), 0, i); //Username of the sender goes here
-			//chatBox.add(new Label("Timestamp"), 1, i); //Timestamp goes here
-			//chatBox.add(new Label(messages.get(i)), 2, i); // Message goes here. How do we handle multiline/long messages?
     }
   }; //showchat()
+  
+  public static void refreshChat(String channel) {
+    //we should add logic to refresh chat screen here
+  }
 	
 }

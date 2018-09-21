@@ -44,7 +44,7 @@ public class MqttConnection {
   private static final String mqttCaFilePath = "/home/painless/Project/PainlessClient/painless/tls/ca.crt";
   private static final String mqttClientCrtFilePath = "/home/painless/Project/PainlessClient/painless/tls/painlessTestClient.client.crt";
   private static final String mqttClientKeyFilePath = "/home/painless/Project/PainlessClient/painless/tls/cert.key";
-  private static final String clientChannelListFile = "/home/painless/Project/PainlessClient/painless/channels.txt";
+  private static final String clientChannelListFile = "./channels1.txt";
   
   private static WindowManager windowManager;
   
@@ -241,6 +241,7 @@ public class MqttConnection {
       } else { // if the message is not a system message, it's a regular channel message.
         PainlessMessage incChannelMessage = new PainlessMessage(msg.toString());
         Credentials.getChannelList().get(findChannelIndexByName(channel)).addMsg(incChannelMessage);
+        MainWindowController.refreshChat(channel);
       }
     } // messageArrived
 

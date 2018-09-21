@@ -57,6 +57,7 @@ public class WindowManager {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("login.fxml"));
       scene.setRoot((Parent) loader.load());
       LoginController controller = loader.<LoginController>getController();
+      stage.sizeToScene();
       controller.initManager(this, mqtt);
     } catch (IOException ex) {
       //

@@ -34,8 +34,8 @@ public class App extends Application {
   public void start(Stage stage) {
     Scene scene = new Scene(new StackPane());
     WindowManager windowManager = new WindowManager(scene);
-    windowManager.showLoginScreen();
     windowManager.setStage(stage);
+    windowManager.showLoginScreen();
     stage.setTitle("Painless");
     stage.setScene(scene);
     stage.show();
